@@ -1,0 +1,16 @@
+brief instruction set:
+
+
+1) WHEN OPENING GIT
+
+git config --global user.name "micropolimi"
+git config --global user.email "micropolimi@gmail.com"
+
+git pull (will update your local repository)
+
+
+2)WHEN CLOSING GIT
+
+git add -A (will add any modification to the stage area)
+git commit -m "message"
+git push (if remote repository url has already been specified)
