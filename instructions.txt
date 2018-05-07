@@ -1,6 +1,11 @@
 brief instruction set:
 
 
+
+0) VERY FIRST RUN OF GIT
+git clone https://github.com/ValentinaPolimi/fluo_deconvolution.git
+
+
 1) WHEN OPENING GIT
 
 git config --global user.name "micropolimi"
