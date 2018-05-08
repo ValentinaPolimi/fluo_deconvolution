@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[100]:
+# In[1]:
 
 
 import numpy as np
@@ -28,7 +28,7 @@ valoremax=np.amax(img)
 valore_soglia=valoremax/100
 
 #ricerca delle coordinate dei centri di ogni psf:
-coordinates = peak_local_max(img,threshold_abs=valore_soglia, min_distance=dimensione_maggiore,exclude_border=dimensione_maggiore)
+coordinates = peak_local_max(img,threshold_abs=valore_soglia, min_distance=dimensione_maggiore_psf,exclude_border=dimensione_maggiore_psf)
 
 #verifica del numero di psf trovate:
 dimensioni_coord=np.shape(coordinates)
@@ -44,7 +44,7 @@ psf_mediata=psf/numero_psf
 # ATTENZIONE: le coordinate dell'immagine e della psf vengono lette come (z,y,x)
 
 
-# In[101]:
+# In[2]:
 
 
 
