@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[16]:
 
 
 import numpy as np
@@ -14,18 +14,18 @@ import glob
 from skimage.external import tifffile as tiff
 from skimage.feature import peak_local_max
 from skimage import color, data, restoration
-
-
+import pylab as plb
+from scipy.ndimage import zoom
 
 
 # In[3]:
 
 
 #Path del file da deconvolvere:
-file1=tiff.imread("/Users/Abel/Desktop/progetto di tesi/PSFlarge.tif")
+file1=tiff.imread("/Users/Abel/Desktop/progetto di tesi/eye.tif")
 
 #Path del file del campione da cui estrarre la psf:
-file2=tiff.imread("/Users/Abel/Desktop/progetto di tesi/PSFlarge.tif")
+file2=tiff.imread("/Users/Abel/Desktop/progetto di tesi/psf.tif")
 
 
 dimensioni_stack=np.shape(file1)
@@ -33,31 +33,31 @@ dimensioni_stack=np.array(dimensioni_stack)
 xmax_stack=dimensioni_stack[2]-1
 ymax_stack=dimensioni_stack[1]-1
 zmax_stack=dimensioni_stack[0]-1
-piano_visualizzato=27
+
 #Porzione di stack che si vuole deconvolvere:
-x_iniziale=1000
-x_finale=1600#xmax_stack
+x_iniziale=0
+x_finale=xmax_stack
 
 y_iniziale=0
 y_finale=ymax_stack
 
 z_iniziale=0
-z_finale=100#zmax_stack
+z_finale=zmax_stack
 
 img=file1[z_iniziale:z_finale,y_iniziale:y_finale,x_iniziale:x_finale]
 
 
 #Dimensioni della psf che si vuole acquisire:
-semilarghezza_psf=15
-semialtezza_psf=15
-semiprofondita_psf=15
+semilarghezza_psf=3
+semialtezza_psf=3
+semiprofondita_psf=3
 dimensioni_psf=[semilarghezza_psf,semialtezza_psf,semiprofondita_psf]
 dimensione_maggiore_psf=np.amax(dimensioni_psf)
 
 valoremax=np.amax(file2)
 
 #Valore minimo per cui un pixel può essere ritenuto un picco di psf:
-valore_soglia=valoremax/100
+valore_soglia=valoremax/2
 
 
 # In[4]:
@@ -90,10 +90,9 @@ for j in range(0,numero_psf):
     
 psf_mediata=psf/numero_psf
 
-np.sum(psf_mediata)
 
 
-# In[8]:
+# In[5]:
 
 
 #Visualizzazione della psf nelle tre viste:
@@ -123,18 +122,51 @@ plt.show()
 print ("immagini ottenute mediando %d psf"%numero_psf)
 
 
-# In[9]:
+# In[6]:
 
 
 #deconvoluzione dei dati con richardson-lucy:
-img_restaurata= restoration.richardson_lucy(img, psf_mediata, iterations=30,clip=False)
-estratto_originario=img[:,piano_visualizzato,:]
-estratto_restaurato=img_restaurata[:,piano_visualizzato,:]
-a=plt.imshow(estratto_restaurato,vmin=0,vmax=255, cmap="gray")
+img_restaurata= restoration.richardson_lucy(img,psf_mediata, iterations=30,clip=False)
 
 
-# In[11]:
+# In[15]:
 
 
-type(estratto_originario[2,4])
+#visualizzazione delle immagini deconvolute
+estratto_originario=img[40,:,:]
+estratto_restaurato=img_restaurata[40,:,:]
+
+
+#aggiungere le seguenti due righe di codice solo se si visualizza immagini xz o yz (servono a compensare
+#la diversa dimensione dei pixel lungo z in questo preciso file)
+
+
+#estratto_originario = zoom(estratto_originario, (5/0.65, 1))
+#estratto_restaurato =zoom(estratto_restaurato, (5/0.65, 1))
+
+
+
+
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(20,10))
+
+for ii in (ax[0], ax[1]):
+    ii.axis('off')
+
+ax[0].imshow(estratto_originario, vmin=estratto_originario.min(), vmax=estratto_originario.max(), cmap="gray")
+ax[0].set_title('immagine originale')
+
+
+ax[1].imshow(estratto_restaurato, vmin=estratto_originario.min(), vmax=estratto_originario.max(), cmap="gray") 
+ax[1].set_title('immagine restaurata')
+
+fig.subplots_adjust(wspace=0.02, hspace=0.2,
+                    top=0.9, bottom=0.05, left=0, right=1)
+
+plt.show()
+
+
+# In[14]:
+
+
+np.shape(file1)
 
